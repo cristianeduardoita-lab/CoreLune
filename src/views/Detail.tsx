@@ -28,7 +28,7 @@ export const Detail: React.FC<DetailProps> = ({ product, onNavigate }) => {
   };
 
   return (
-    <div className="pt-24 pb-24 px-6 max-w-7xl mx-auto">
+    <div className="pt-4 pb-24 px-6 max-w-7xl mx-auto">
       <button 
         onClick={() => onNavigate('catalog')}
         className="flex items-center gap-2 text-brand-terracotta font-bold text-[10px] uppercase tracking-[0.2em] mb-12 hover:-translate-x-1 transition-transform"

@@ -8,7 +8,7 @@ export const About: React.FC = () => {
   const { t } = useLanguage();
   
   return (
-    <div className="pt-24 pb-24 px-6 max-w-4xl mx-auto">
+    <div className="pt-4 pb-24 px-6 max-w-4xl mx-auto">
       <motion.div 
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -59,7 +59,7 @@ export const Contact: React.FC = () => {
   const { t } = useLanguage();
   
   return (
-    <div className="pt-24 pb-24 px-6 max-w-7xl mx-auto">
+    <div className="pt-4 pb-24 px-6 max-w-7xl mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
         <div>
           <span className="text-[10px] uppercase tracking-[0.4em] text-brand-terracotta font-bold mb-4 block">{t('contact.badge')}</span>

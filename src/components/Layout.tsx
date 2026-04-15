@@ -14,179 +14,231 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView }) => {
   const { totalItems } = useCart();
   const { language, setLanguage, t } = useLanguage();
 
+  // Lock body scroll when menu is open
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   const navItems = [
     { name: t('nav.home'), id: 'home' },
     { name: t('nav.shop'), id: 'catalog' },
+    { name: t('nav.custom'), id: 'custom', action: () => {
+      const message = encodeURIComponent(t('cart.whatsapp.msg'));
+      window.open(`https://wa.me/1234567890?text=${message}`, '_blank');
+    }},
     { name: t('nav.story'), id: 'about' },
     { name: t('nav.contact'), id: 'contact' },
   ];
 
+  const handleNavClick = (item: any) => {
+    if (item.action) {
+      item.action();
+    } else {
+      onNavigate(item.id);
+    }
+    setIsOpen(false);
+  };
+
   return (
-    <nav className="fixed top-0 w-full z-50 bg-brand-beige/90 backdrop-blur-sm border-b border-brand-sand/10">
-      {/* Discrete Top Bar for Language */}
-      <div className="h-8 bg-brand-coffee text-brand-beige/40 text-[9px] uppercase tracking-[0.3em] flex items-center justify-center gap-4 border-b border-brand-beige/5">
-        <button 
-          onClick={() => setLanguage('en')}
-          className={`hover:text-brand-beige transition-colors ${language === 'en' ? 'text-brand-beige font-bold' : ''}`}
-        >
-          English
-        </button>
-        <span className="opacity-20">|</span>
-        <button 
-          onClick={() => setLanguage('es')}
-          className={`hover:text-brand-beige transition-colors ${language === 'es' ? 'text-brand-beige font-bold' : ''}`}
-        >
-          Español
-        </button>
+    <>
+      {/* Micro Top Bar */}
+      <div className="fixed top-0 w-full z-[60] bg-brand-beige/80 backdrop-blur-md border-b border-brand-sand/5 h-6 flex items-center">
+        <div className="max-w-7xl mx-auto px-6 w-full flex justify-end items-center">
+          <div className="flex items-center text-[8px] font-bold tracking-[0.25em] text-brand-coffee/30">
+            <button 
+              onClick={() => setLanguage('en')}
+              className={`transition-colors hover:text-brand-terracotta ${language === 'en' ? 'text-brand-terracotta' : ''}`}
+            >
+              EN
+            </button>
+            <span className="mx-3 opacity-10">|</span>
+            <button 
+              onClick={() => setLanguage('es')}
+              className={`transition-colors hover:text-brand-terracotta ${language === 'es' ? 'text-brand-terracotta' : ''}`}
+            >
+              ES
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
-        <button 
-          onClick={() => setIsOpen(true)}
-          className="lg:hidden text-brand-coffee p-2"
-        >
-          <Menu size={20} />
-        </button>
+      <nav className="fixed top-6 w-full z-50 bg-brand-beige border-b border-brand-sand/10 h-16 flex items-center">
+        <div className="max-w-7xl mx-auto px-6 w-full flex justify-between items-center relative">
+          {/* Mobile Menu Toggle */}
+          <button 
+            onClick={() => setIsOpen(true)}
+            className="lg:hidden text-brand-coffee p-2 -ml-2 hover:text-brand-terracotta transition-colors"
+            aria-label="Open Menu"
+          >
+            <Menu size={24} strokeWidth={1.5} />
+          </button>
 
-        <div className="hidden lg:flex gap-10">
-          {navItems.slice(0, 2).map(item => (
-            <button
-              key={item.id}
-              onClick={() => onNavigate(item.id)}
-              className={`text-[10px] uppercase tracking-[0.2em] font-bold transition-colors ${
-                currentView === item.id ? 'text-brand-terracotta' : 'text-brand-coffee/60 hover:text-brand-terracotta'
-              }`}
-            >
-              {item.name}
-            </button>
-          ))}
-        </div>
-
-        <button 
-          onClick={() => onNavigate('home')}
-          className="absolute left-1/2 -translate-x-1/2 text-xl font-serif tracking-tighter text-brand-coffee"
-        >
-          Cora Lune
-        </button>
-
-        <div className="flex items-center gap-4">
-          <div className="hidden lg:flex gap-10 mr-10">
-            {navItems.slice(2).map(item => (
+          {/* Desktop Left Nav */}
+          <div className="hidden lg:flex gap-10 items-center">
+            {navItems.slice(0, 2).map(item => (
               <button
                 key={item.id}
-                onClick={() => onNavigate(item.id)}
-                className={`text-[10px] uppercase tracking-[0.2em] font-bold transition-colors ${
-                  currentView === item.id ? 'text-brand-terracotta' : 'text-brand-coffee/60 hover:text-brand-terracotta'
+                onClick={() => handleNavClick(item)}
+                className={`text-[11px] uppercase tracking-[0.3em] font-bold transition-all hover:text-brand-terracotta ${
+                  currentView === item.id ? 'text-brand-terracotta' : 'text-brand-coffee/60'
                 }`}
               >
                 {item.name}
               </button>
             ))}
           </div>
-          <button 
-            onClick={() => onNavigate('cart')}
-            className="relative p-2 text-brand-coffee"
-          >
-            <ShoppingBag size={20} />
-            {totalItems > 0 && (
-              <span className="absolute top-0 right-0 bg-brand-terracotta text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-                {totalItems}
-              </span>
-            )}
-          </button>
-        </div>
-      </div>
 
-      {/* Mobile Menu Overlay */}
+          {/* Logo - Centered */}
+          <button 
+            onClick={() => onNavigate('home')}
+            className="absolute left-1/2 -translate-x-1/2 text-2xl md:text-3xl font-serif tracking-tighter text-brand-coffee hover:text-brand-terracotta transition-colors"
+          >
+            Cora Lune
+          </button>
+
+          {/* Desktop Right Nav + Cart */}
+          <div className="flex items-center gap-4 md:gap-8">
+            <div className="hidden lg:flex gap-10 items-center">
+              {navItems.slice(2).map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => handleNavClick(item)}
+                  className={`text-[11px] uppercase tracking-[0.3em] font-bold transition-all hover:text-brand-terracotta ${
+                    currentView === item.id ? 'text-brand-terracotta' : 'text-brand-coffee/60'
+                  }`}
+                >
+                  {item.name}
+                </button>
+              ))}
+            </div>
+
+            <button 
+              onClick={() => onNavigate('cart')}
+              className="relative p-2 text-brand-coffee hover:text-brand-terracotta transition-colors"
+              aria-label="View Cart"
+            >
+              <ShoppingBag size={22} strokeWidth={1.5} />
+              {totalItems > 0 && (
+                <span className="absolute top-0 right-0 bg-brand-terracotta text-white text-[9px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold shadow-sm">
+                  {totalItems}
+                </span>
+              )}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Full-Screen Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-brand-coffee/20 backdrop-blur-sm z-[60] lg:hidden"
-            />
-            <motion.div
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 bottom-0 w-[85%] max-w-sm bg-brand-beige z-[70] lg:hidden flex flex-col shadow-2xl"
-            >
-              <div className="p-8 flex justify-between items-center border-b border-brand-sand/10">
-                <span className="font-serif text-lg tracking-tighter text-brand-coffee">Cora Lune</span>
-                <button 
-                  onClick={() => setIsOpen(false)} 
-                  className="w-10 h-10 flex items-center justify-center rounded-full bg-brand-cream text-brand-coffee hover:bg-brand-sand/20 transition-colors"
-                >
-                  <X size={18} />
-                </button>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 bg-brand-beige z-[100] lg:hidden flex flex-col h-screen w-screen"
+          >
+            {/* Menu Header */}
+            <div className="h-20 px-6 flex justify-between items-center border-b border-brand-sand/10 flex-shrink-0">
+              <span className="font-serif text-xl tracking-tighter text-brand-coffee">Cora Lune</span>
+              <button 
+                onClick={() => setIsOpen(false)} 
+                className="p-2 -mr-2 text-brand-coffee hover:text-brand-terracotta transition-colors"
+                aria-label="Close Menu"
+              >
+                <X size={28} strokeWidth={1.5} />
+              </button>
+            </div>
+
+            {/* Menu Body */}
+            <div className="flex-grow flex flex-col px-10 py-12 overflow-y-auto no-scrollbar">
+              <div className="flex flex-col gap-8 md:gap-10 mb-auto">
+                {navItems.map((item, index) => (
+                  <motion.button
+                    key={item.id}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 + index * 0.05, duration: 0.4 }}
+                    onClick={() => handleNavClick(item)}
+                    className={`text-3xl md:text-5xl font-serif text-left transition-all ${
+                      currentView === item.id ? 'text-brand-terracotta' : 'text-brand-coffee'
+                    }`}
+                  >
+                    {item.name}
+                  </motion.button>
+                ))}
               </div>
 
-              <div className="flex-grow overflow-y-auto p-8 py-12">
-                <div className="flex flex-col gap-8">
-                  {navItems.map((item, index) => (
-                    <motion.button
-                      key={item.id}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      onClick={() => {
-                        onNavigate(item.id);
-                        setIsOpen(false);
-                      }}
-                      className={`text-2xl font-serif text-left transition-colors ${
-                        currentView === item.id ? 'text-brand-terracotta' : 'text-brand-coffee'
-                      }`}
-                    >
-                      {item.name}
-                    </motion.button>
-                  ))}
-                </div>
-
-                <div className="mt-16 pt-12 border-t border-brand-sand/10 space-y-10">
-                  <div className="space-y-4">
-                    <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-brand-coffee/40">Language</h4>
-                    <div className="flex gap-4 text-[10px] uppercase tracking-[0.2em] font-bold text-brand-coffee">
+              {/* Menu Footer / Secondary Links */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="mt-16 pt-10 border-t border-brand-sand/10 flex-shrink-0"
+              >
+                <div className="flex flex-col sm:grid sm:grid-cols-2 gap-10 sm:gap-12">
+                  <div className="space-y-4 sm:space-y-6">
+                    <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-coffee/40">Language</h4>
+                    <div className="flex gap-6 text-[11px] uppercase tracking-[0.2em] font-bold">
                       <button 
                         onClick={() => setLanguage('en')}
-                        className={`px-3 py-1 rounded-full border ${language === 'en' ? 'bg-brand-coffee text-white border-brand-coffee' : 'border-brand-sand/30'}`}
+                        className={`transition-colors ${language === 'en' ? 'text-brand-terracotta' : 'text-brand-coffee/40'}`}
                       >
-                        EN
+                        English
                       </button>
                       <button 
                         onClick={() => setLanguage('es')}
-                        className={`px-3 py-1 rounded-full border ${language === 'es' ? 'bg-brand-coffee text-white border-brand-coffee' : 'border-brand-sand/30'}`}
+                        className={`transition-colors ${language === 'es' ? 'text-brand-terracotta' : 'text-brand-coffee/40'}`}
                       >
-                        ES
+                        Español
                       </button>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-brand-coffee/40">Connect</h4>
-                    <div className="flex gap-6 text-brand-terracotta">
-                      <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:opacity-70 transition-opacity">
-                        <Instagram size={20} />
+                  <div className="space-y-4 sm:space-y-6">
+                    <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-coffee/40">Connect</h4>
+                    <div className="flex gap-8 text-brand-terracotta">
+                      <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:scale-110 transition-transform">
+                        <Instagram size={22} strokeWidth={1.5} />
                       </a>
-                      <a href="https://wa.me/1234567890" target="_blank" rel="noreferrer" className="hover:opacity-70 transition-opacity">
-                        <MessageCircle size={20} />
+                      <button 
+                        onClick={() => {
+                          onNavigate('cart');
+                          setIsOpen(false);
+                        }}
+                        className="hover:scale-110 transition-transform relative"
+                      >
+                        <ShoppingBag size={22} strokeWidth={1.5} />
+                        {totalItems > 0 && (
+                          <span className="absolute -top-1 -right-1 bg-brand-terracotta text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                            {totalItems}
+                          </span>
+                        )}
+                      </button>
+                      <a href="https://wa.me/1234567890" target="_blank" rel="noreferrer" className="hover:scale-110 transition-transform">
+                        <MessageCircle size={22} strokeWidth={1.5} />
                       </a>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="p-8 border-t border-brand-sand/10 text-[8px] uppercase tracking-[0.3em] text-brand-coffee/30">
-                North Austin, US • Handmade with Love
-              </div>
-            </motion.div>
-          </>
+                <div className="mt-12 text-[8px] uppercase tracking-[0.4em] text-brand-coffee/30 flex justify-between items-center">
+                  <span>North Austin, US</span>
+                  <span>Handmade with Love</span>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </>
   );
 };
 

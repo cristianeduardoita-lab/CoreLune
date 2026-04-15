@@ -12,7 +12,7 @@ export const Catalog: React.FC<CatalogProps> = ({ onNavigate }) => {
   const { t } = useLanguage();
   
   return (
-    <div className="pt-24 pb-24 px-6 max-w-7xl mx-auto">
+    <div className="pt-4 pb-24 px-6 max-w-7xl mx-auto">
       <header className="mb-16 text-center max-w-2xl mx-auto">
         <span className="text-[10px] uppercase tracking-[0.4em] text-brand-terracotta font-bold mb-4 block">{t('catalog.badge')}</span>
         <h1 className="font-serif text-4xl md:text-5xl text-brand-coffee mb-6 leading-tight">{t('catalog.title')}</h1>

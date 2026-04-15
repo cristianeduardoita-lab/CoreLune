@@ -12,9 +12,10 @@ const translations = {
   en: {
     // Navbar
     'nav.home': 'Home',
-    'nav.shop': 'Shop',
-    'nav.story': 'Our Story',
-    'nav.contact': 'Contact',
+    'nav.shop': 'Shop Collection',
+    'nav.custom': 'Custom Order',
+    'nav.story': 'About Us',
+    'nav.contact': 'Contact Us',
     'nav.cart': 'Bag',
     // Home
     'home.hero.badge': 'North Austin, US',
@@ -110,8 +111,9 @@ const translations = {
   es: {
     // Navbar
     'nav.home': 'Inicio',
-    'nav.shop': 'Tienda',
-    'nav.story': 'Nuestra Historia',
+    'nav.shop': 'Colección',
+    'nav.custom': 'Pedido Especial',
+    'nav.story': 'Nosotros',
     'nav.contact': 'Contacto',
     'nav.cart': 'Bolsa',
     // Home

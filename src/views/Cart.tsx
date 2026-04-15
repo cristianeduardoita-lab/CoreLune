@@ -22,7 +22,7 @@ export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
 
   if (cart.length === 0) {
     return (
-      <div className="pt-40 pb-32 px-6 text-center max-w-xl mx-auto">
+      <div className="pt-8 pb-32 px-6 text-center max-w-xl mx-auto">
         <div className="flex justify-center mb-8 text-brand-sand/30">
           <ShoppingBag size={64} strokeWidth={1} />
         </div>
@@ -41,7 +41,7 @@ export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
   }
 
   return (
-    <div className="pt-24 pb-24 px-6 max-w-7xl mx-auto">
+    <div className="pt-4 pb-24 px-6 max-w-7xl mx-auto">
       <h1 className="font-serif text-4xl text-brand-coffee mb-12">{t('cart.title')}</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
