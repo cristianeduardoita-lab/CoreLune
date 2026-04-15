@@ -17,6 +17,7 @@ const translations = {
     'nav.story': 'About Us',
     'nav.contact': 'Contact Us',
     'nav.cart': 'Bag',
+    'nav.more': 'More',
     // Home
     'home.hero.badge': 'North Austin, US',
     'home.hero.title': 'Aesthetic Handmade Candles',
@@ -71,7 +72,7 @@ const translations = {
     'cart.summary.shipping.desc': 'Calculated later',
     'cart.summary.total': 'Total',
     'cart.summary.cta': 'Checkout via WhatsApp',
-    'cart.summary.footer': 'Redirecting to WhatsApp to coordinate shipping & payment',
+    'cart.summary.footer': 'You will be redirected to WhatsApp to coordinate shipping and payment.',
     'cart.whatsapp.msg': 'Hi! I\'d like to place an order from Cora Lune ✨',
     // About
     'about.badge': 'Our Story',
@@ -116,6 +117,7 @@ const translations = {
     'nav.story': 'Nosotros',
     'nav.contact': 'Contacto',
     'nav.cart': 'Bolsa',
+    'nav.more': 'Más',
     // Home
     'home.hero.badge': 'North Austin, US',
     'home.hero.title': 'Velas Artesanales Estéticas',
@@ -170,7 +172,7 @@ const translations = {
     'cart.summary.shipping.desc': 'Calculado después',
     'cart.summary.total': 'Total',
     'cart.summary.cta': 'Finalizar por WhatsApp',
-    'cart.summary.footer': 'Redirigiendo a WhatsApp para coordinar envío y pago',
+    'cart.summary.footer': 'Serás redirigido a WhatsApp para coordinar el envío y el pago de tu pedido.',
     'cart.whatsapp.msg': '¡Hola! Me gustaría hacer un pedido de Cora Lune ✨',
     // About
     'about.badge': 'Nuestra Historia',

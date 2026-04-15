@@ -23,7 +23,7 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   return (
     <div className="pt-0">
       {/* Hero Section */}
-      <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[65vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <ImageWithFallback 
             src="https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&q=80&w=2000" 
@@ -41,7 +41,7 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
             transition={{ duration: 0.8 }}
           >
             <span className="text-[10px] uppercase tracking-[0.4em] text-brand-terracotta font-bold mb-4 block">{t('home.hero.badge')}</span>
-            <h1 className="font-serif text-4xl md:text-7xl text-brand-coffee mb-6 tracking-tight leading-tight">
+            <h1 className="font-serif text-4xl md:text-6xl text-brand-coffee mb-6 tracking-tight leading-tight">
               {t('home.hero.title')}
             </h1>
             <p className="text-sm md:text-lg text-brand-coffee/70 mb-10 leading-relaxed max-w-xl mx-auto font-light">

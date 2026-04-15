@@ -11,6 +11,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView }) => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const [isMoreOpen, setIsMoreOpen] = React.useState(false);
   const { totalItems } = useCart();
   const { language, setLanguage, t } = useLanguage();
 
@@ -26,9 +27,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView }) => {
     };
   }, [isOpen]);
 
-  const navItems = [
+  // Close dropdown on click outside
+  React.useEffect(() => {
+    const handleClickOutside = () => setIsMoreOpen(false);
+    if (isMoreOpen) {
+      window.addEventListener('click', handleClickOutside);
+    }
+    return () => window.removeEventListener('click', handleClickOutside);
+  }, [isMoreOpen]);
+
+  const primaryItems = [
     { name: t('nav.home'), id: 'home' },
     { name: t('nav.shop'), id: 'catalog' },
+  ];
+
+  const secondaryItems = [
     { name: t('nav.custom'), id: 'custom', action: () => {
       const message = encodeURIComponent(t('cart.whatsapp.msg'));
       window.open(`https://wa.me/1234567890?text=${message}`, '_blank');
@@ -37,6 +50,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView }) => {
     { name: t('nav.contact'), id: 'contact' },
   ];
 
+  const navItems = [...primaryItems, ...secondaryItems];
+
   const handleNavClick = (item: any) => {
     if (item.action) {
       item.action();
@@ -44,12 +59,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView }) => {
       onNavigate(item.id);
     }
     setIsOpen(false);
+    setIsMoreOpen(false);
   };
 
   return (
     <>
-      {/* Micro Top Bar */}
-      <div className="fixed top-0 w-full z-[60] bg-brand-beige/80 backdrop-blur-md border-b border-brand-sand/5 h-6 flex items-center">
+      {/* Micro Top Bar - Only for mobile/tablet or secondary info */}
+      <div className="fixed top-0 w-full z-[60] bg-brand-beige/80 backdrop-blur-md border-b border-brand-sand/5 h-6 flex items-center lg:hidden">
         <div className="max-w-7xl mx-auto px-6 w-full flex justify-end items-center">
           <div className="flex items-center text-[8px] font-bold tracking-[0.25em] text-brand-coffee/30">
             <button 
@@ -69,8 +85,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView }) => {
         </div>
       </div>
 
-      <nav className="fixed top-6 w-full z-50 bg-brand-beige border-b border-brand-sand/10 h-16 flex items-center">
-        <div className="max-w-7xl mx-auto px-6 w-full flex justify-between items-center relative">
+      <nav className="fixed top-0 lg:top-0 w-full z-50 bg-brand-beige border-b border-brand-sand/10 h-16 flex items-center mt-6 lg:mt-0">
+        <div className="max-w-5xl mx-auto px-6 w-full flex justify-between items-center relative">
           {/* Mobile Menu Toggle */}
           <button 
             onClick={() => setIsOpen(true)}
@@ -81,52 +97,97 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView }) => {
           </button>
 
           {/* Desktop Left Nav */}
-          <div className="hidden lg:flex gap-10 items-center">
-            {navItems.slice(0, 2).map(item => (
+          <div className="hidden lg:flex gap-8 items-center">
+            {primaryItems.map(item => (
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item)}
-                className={`text-[11px] uppercase tracking-[0.3em] font-bold transition-all hover:text-brand-terracotta ${
+                className={`text-[10px] uppercase tracking-[0.3em] font-bold transition-all hover:text-brand-terracotta ${
                   currentView === item.id ? 'text-brand-terracotta' : 'text-brand-coffee/60'
                 }`}
               >
                 {item.name}
               </button>
             ))}
+            
+            {/* More Dropdown */}
+            <div className="relative">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMoreOpen(!isMoreOpen);
+                }}
+                className={`text-[10px] uppercase tracking-[0.3em] font-bold transition-all flex items-center gap-1.5 ${
+                  isMoreOpen ? 'text-brand-terracotta' : 'text-brand-coffee/60 hover:text-brand-terracotta'
+                }`}
+              >
+                {t('nav.more')}
+                <motion.div animate={{ rotate: isMoreOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                  <svg width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 1L4 4L7 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </motion.div>
+              </button>
+
+              <AnimatePresence>
+                {isMoreOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full left-0 mt-4 w-48 bg-white shadow-2xl rounded-2xl border border-brand-sand/10 py-3 z-[70] overflow-hidden"
+                  >
+                    <div className="absolute top-0 left-6 -translate-y-1/2 w-3 h-3 bg-white border-t border-l border-brand-sand/10 rotate-45" />
+                    {secondaryItems.map(item => (
+                      <button
+                        key={item.id}
+                        onClick={() => handleNavClick(item)}
+                        className="w-full text-left px-6 py-3 text-[10px] uppercase tracking-[0.2em] font-bold text-brand-coffee/60 hover:text-brand-terracotta hover:bg-brand-cream/30 transition-all"
+                      >
+                        {item.name}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* Logo - Centered */}
           <button 
             onClick={() => onNavigate('home')}
-            className="absolute left-1/2 -translate-x-1/2 text-2xl md:text-3xl font-serif tracking-tighter text-brand-coffee hover:text-brand-terracotta transition-colors"
+            className="absolute left-1/2 -translate-x-1/2 text-2xl font-serif tracking-tighter text-brand-coffee hover:text-brand-terracotta transition-colors"
           >
             Cora Lune
           </button>
 
           {/* Desktop Right Nav + Cart */}
-          <div className="flex items-center gap-4 md:gap-8">
-            <div className="hidden lg:flex gap-10 items-center">
-              {navItems.slice(2).map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => handleNavClick(item)}
-                  className={`text-[11px] uppercase tracking-[0.3em] font-bold transition-all hover:text-brand-terracotta ${
-                    currentView === item.id ? 'text-brand-terracotta' : 'text-brand-coffee/60'
-                  }`}
-                >
-                  {item.name}
-                </button>
-              ))}
+          <div className="flex items-center gap-4 lg:gap-6">
+            {/* Desktop Language Selector */}
+            <div className="hidden lg:flex items-center text-[9px] font-bold tracking-[0.2em] text-brand-coffee/30 mr-2 bg-brand-cream/50 px-3 py-1.5 rounded-full border border-brand-sand/5">
+              <button 
+                onClick={() => setLanguage('en')}
+                className={`transition-colors hover:text-brand-terracotta ${language === 'en' ? 'text-brand-terracotta' : ''}`}
+              >
+                EN
+              </button>
+              <span className="mx-2 opacity-10">|</span>
+              <button 
+                onClick={() => setLanguage('es')}
+                className={`transition-colors hover:text-brand-terracotta ${language === 'es' ? 'text-brand-terracotta' : ''}`}
+              >
+                ES
+              </button>
             </div>
 
             <button 
               onClick={() => onNavigate('cart')}
-              className="relative p-2 text-brand-coffee hover:text-brand-terracotta transition-colors"
+              className="relative p-2 text-brand-coffee hover:text-brand-terracotta transition-colors group"
               aria-label="View Cart"
             >
-              <ShoppingBag size={22} strokeWidth={1.5} />
+              <ShoppingBag size={20} strokeWidth={1.5} className="group-hover:scale-110 transition-transform" />
               {totalItems > 0 && (
-                <span className="absolute top-0 right-0 bg-brand-terracotta text-white text-[9px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold shadow-sm">
+                <span className="absolute top-0 right-0 bg-brand-terracotta text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-sm">
                   {totalItems}
                 </span>
               )}
@@ -249,15 +310,15 @@ export const Footer: React.FC<{ onNavigate: (view: string) => void }> = ({ onNav
     <footer className="bg-brand-cream py-24 px-6 border-t border-brand-sand/10">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16">
         <div className="md:col-span-2">
-          <h2 className="font-serif text-2xl text-brand-coffee mb-8">Cora Lune</h2>
+          <h2 className="font-serif text-3xl text-brand-coffee mb-8 tracking-tighter">Cora Lune</h2>
           <p className="text-brand-coffee/60 max-w-sm leading-relaxed text-sm font-light">
             {t('footer.desc')}
           </p>
         </div>
         
         <div>
-          <h4 className="font-bold uppercase tracking-[0.2em] text-[10px] mb-8">{t('footer.explore')}</h4>
-          <ul className="space-y-4 text-xs text-brand-coffee/60">
+          <h4 className="font-bold uppercase tracking-[0.3em] text-[10px] mb-8 text-brand-coffee/40">{t('footer.explore')}</h4>
+          <ul className="space-y-4 text-[11px] uppercase tracking-[0.1em] font-bold text-brand-coffee/60">
             <li><button onClick={() => onNavigate('catalog')} className="hover:text-brand-terracotta transition-colors">{t('footer.shopAll')}</button></li>
             <li><button onClick={() => onNavigate('about')} className="hover:text-brand-terracotta transition-colors">{t('nav.story')}</button></li>
             <li><button onClick={() => onNavigate('contact')} className="hover:text-brand-terracotta transition-colors">{t('nav.contact')}</button></li>
@@ -265,15 +326,23 @@ export const Footer: React.FC<{ onNavigate: (view: string) => void }> = ({ onNav
         </div>
 
         <div>
-          <h4 className="font-bold uppercase tracking-[0.2em] text-[10px] mb-8">{t('footer.follow')}</h4>
+          <h4 className="font-bold uppercase tracking-[0.3em] text-[10px] mb-8 text-brand-coffee/40">{t('footer.follow')}</h4>
           <div className="flex gap-6 text-brand-terracotta">
-            <Instagram size={18} className="cursor-pointer hover:opacity-70 transition-opacity" />
-            <MessageCircle size={18} className="cursor-pointer hover:opacity-70 transition-opacity" />
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:scale-110 transition-transform">
+              <Instagram size={20} strokeWidth={1.5} />
+            </a>
+            <a href="https://wa.me/1234567890" target="_blank" rel="noreferrer" className="hover:scale-110 transition-transform">
+              <MessageCircle size={20} strokeWidth={1.5} />
+            </a>
           </div>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto mt-24 pt-10 border-t border-brand-sand/10 text-center text-[10px] uppercase tracking-[0.3em] text-brand-coffee/30">
-        {t('footer.rights')}
+      <div className="max-w-7xl mx-auto mt-24 pt-10 border-t border-brand-sand/10 flex flex-col md:flex-row justify-between items-center gap-6 text-[9px] uppercase tracking-[0.3em] text-brand-coffee/30">
+        <span>{t('footer.rights')}</span>
+        <div className="flex gap-8">
+          <span className="opacity-50">North Austin, US</span>
+          <span className="opacity-50">Hand-poured with intention</span>
+        </div>
       </div>
     </footer>
   );

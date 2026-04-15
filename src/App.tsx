@@ -55,7 +55,7 @@ export default function App() {
         <div className="min-h-screen flex flex-col">
           <Navbar onNavigate={handleNavigate} currentView={view} />
           
-          <main className="flex-grow pt-[88px]">
+          <main className="flex-grow pt-[88px] lg:pt-16">
             <AnimatePresence mode="wait">
               <motion.div
                 key={view + (selectedProduct?.id || '')}
